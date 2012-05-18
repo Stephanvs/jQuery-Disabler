@@ -34,14 +34,23 @@
         });
 
         if (disable === undefined || disable) {
+            // First find all controls that are currently disabled, 
+            // we give them a special attribute to determine later on whether they were disabled
+        	controls.filter(':disabled').data('initiallyDisabled', true);
+            
             controls.addClass('disabled');
             controls.attr('disabled', (jQuery.browser.msie) ? 'true' : 'disabled');
             controls.bindFirst('click', DisableClick);
         }
         else {
-            controls.removeClass('disabled');
-            controls.removeAttr('disabled');
-            controls.unbind('click', DisableClick);
+            controls.each(function(i, e) {
+                var el = $(this);
+            	if (!(el.data('initiallyDisabled'))) {
+        			el.removeClass('disabled');
+        			el.removeAttr('disabled');
+        			el.unbind('click', DisableClick);
+        		}
+        	});
         }
 
         return this;
